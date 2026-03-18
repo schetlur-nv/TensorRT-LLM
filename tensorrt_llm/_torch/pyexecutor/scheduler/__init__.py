@@ -40,7 +40,7 @@ from .scheduler import (
 )
 
 # Re-export from waiting_queue.py
-from .waiting_queue import FCFSWaitingQueue, WaitingQueue, create_waiting_queue
+from .waiting_queue import FCFSWaitingQueue, PriorityWaitingQueue, WaitingQueue, create_waiting_queue
 
 __all__ = [
     # Schedulers
@@ -64,6 +64,7 @@ __all__ = [
     "RankState",
     # Waiting queues
     "FCFSWaitingQueue",
+    "PriorityWaitingQueue",
     "WaitingQueue",
     "create_waiting_queue",
 ]

@@ -1849,9 +1849,19 @@ class ContextChunkingPolicy(StrEnum, metaclass=PybindMirrorEnumMeta):
 
 
 class WaitingQueuePolicy(StrEnum):
-    """Waiting queue scheduling policy for managing pending requests."""
+    """Waiting queue scheduling policy for managing pending requests.
+
+    Policies:
+        FCFS: First-Come-First-Served. Requests are served in arrival order.
+        PRIORITY: Priority-ordered scheduling. Requests are served in
+            descending order of their ``priority`` field (float in [0, 1],
+            higher = more urgent). Ties are broken by arrival order (FCFS).
+            Mirrors the C++ batch manager's ``insertRequestInOrder`` /
+            ``getLeaderNewReqWithIds`` preemption logic.
+    """
 
     FCFS = "fcfs"  # First-Come-First-Served
+    PRIORITY = "priority"  # Priority-ordered (higher priority served first)
 
 
 @PybindMirror.mirror_pybind_fields(_DynamicBatchConfig)

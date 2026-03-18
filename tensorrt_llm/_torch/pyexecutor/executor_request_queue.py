@@ -24,6 +24,7 @@ class RequestQueueItem:
     child_req_ids: Optional[list] = None
     is_canceled_request: bool = False
     query: Optional[list] = None  # only used in `StarAttention`
+    priority: float = 0.5  # Request scheduling priority in [0, 1]; higher = more urgent
 
     @property
     def is_shutdown_request(self):
@@ -99,11 +100,17 @@ class ExecutorRequestQueue:
                     self.start_times[req_id] = start_time
                 child_req_ids = self._generate_child_request_ids(request)
 
+                # Read priority from the request object.  The C++ executor
+                # Request stores priority internally; ``getattr`` falls back to
+                # the default (0.5) when the Python binding does not yet expose
+                # a ``priority`` property.
+                req_priority = getattr(request, "priority", 0.5)
                 self.request_queue.put(
                     RequestQueueItem(req_id,
                                      request,
                                      child_req_ids=child_req_ids,
-                                     query=query))
+                                     query=query,
+                                     priority=req_priority))
                 req_ids.append(req_id)
         return req_ids
 
